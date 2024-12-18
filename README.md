@@ -1,35 +1,71 @@
-# 🏗 Monad Simple Token Wallet Challenge
+# MonadTokenWallet Smart Contract
 
-## 📋 Challenge Guidelines
+## Overview
 
-### Objective
-Create a basic token wallet contract using Scaffold ETH
+`MonadTokenWallet` is a Solidity smart contract that provides a secure token wallet functionality for ERC20 tokens. It allows users to deposit, withdraw, and track their token balances, with built-in security features.
 
-### Key Requirements
-- Implement deposit functionality
-- Create token withdrawal mechanism
-- Track individual token balances
-- Add basic security measures
-- Emit transaction events
+## Features
 
-### Evaluation Criteria
-1. Contract Functionality
-2. Code Quality
-3. Security Implementations
-4. Event Handling
+- Token deposit and withdrawal
+- Balance tracking
+- Token address management
+- Reentrancy protection
+- Owner-controlled contract
+- Event logging for key actions
 
-### Setup Instructions
-```
-git clone https://github.com/Elishaokon13/my-dapp-example
-cd my-dapp-example
-yarn install
-yarn chain
-yarn deploy
-```
+## Dependencies
 
-### Recommended Approach
-1. Fork the starter repository
-2. Develop your wallet contract
-3. Write thorough tests
-4. Document your design choices
-5. Submit via challenge submission form: https://forms.gle/vh51GWG9dGZpKmpB6
+- OpenZeppelin Contracts:
+  - `@openzeppelin/contracts/token/ERC20/IERC20.sol`
+  - `@openzeppelin/contracts/utils/ReentrancyGuard.sol`
+  - `@openzeppelin/contracts/access/Ownable.sol`
+
+## Contract Functions
+
+### Constructor
+- `constructor(address _tokenAddress)`: Initializes the contract with a specific ERC20 token address
+- Requires a valid token address
+- Sets contract owner to the deployer
+
+### `deposit(uint _amount)`
+- Allows users to deposit tokens into the wallet
+- Requires amount > 0
+- Transfers tokens from user to contract
+- Updates user balance
+- Emits `Deposit` event
+
+### `withdraw(uint _amount)`
+- Allows users to withdraw tokens from the wallet
+- Requires amount > 0 and sufficient balance
+- Transfers tokens from contract to user
+- Updates user balance
+- Emits `Withdraw` event
+
+### `getBalance(address _user)`
+- Returns the token balance for a specific user
+
+### `addToken(address _tokenAddress)`
+- Allows users to add new token addresses to their wallet
+- Requires a valid token address
+- Emits `AddToken` event
+
+## Events
+
+- `Deposit(address indexed _user, uint _amount, uint _timestamp)`: Logged when tokens are deposited
+- `Withdraw(address indexed _user, uint _amount, uint _timestamp)`: Logged when tokens are withdrawn
+- `AddToken(address indexed _user, address indexed _tokenAddress)`: Logged when a new token is added
+
+## Security Considerations
+
+- Uses OpenZeppelin's `ReentrancyGuard` to prevent reentrancy attacks
+- Implements `Ownable` for contract management
+- Validates token addresses and transaction amounts
+- Uses `transferFrom` and `transfer` with failure checks
+
+## License
+
+MIT License
+
+## Disclaimer
+
+This contract is provided as-is. Always audit and test thoroughly before deployment.
