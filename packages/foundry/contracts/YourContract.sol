@@ -2,14 +2,14 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MonadTokenWallet is ReentrancyGuard, Ownable {
 
   event Deposit(address indexed _user, uint _amount, uint _timestamp);
   event Withdraw(address indexed _user, uint _amount, uint _timestamp);
-  event AddToken(address indexed user, address indexed tokenAddress);   
+  event AddToken(address indexed _user, address indexed _tokenAddress);   
 
   IERC20 public token;
 
@@ -22,7 +22,7 @@ contract MonadTokenWallet is ReentrancyGuard, Ownable {
   */
 
   constructor(address _tokenAddress) Ownable(msg.sender) {
-      if(_tokenAddress != address(0)) revert("Invalid token address");
+      if(_tokenAddress == address(0)) revert("Invalid token address");
       token = IERC20(_tokenAddress);
   }
 
@@ -49,7 +49,7 @@ contract MonadTokenWallet is ReentrancyGuard, Ownable {
     if(balances[msg.sender] < _amount) revert("Insuficient balance");
 
     balances[msg.sender] -= _amount;
-    if (!token.transfer(msg.sender, amount)) revert("Transfer failed");
+    if (!token.transfer(msg.sender, _amount)) revert("Transfer failed");
     emit Withdraw(msg.sender, _amount, block.timestamp);
   }
 
@@ -58,8 +58,8 @@ contract MonadTokenWallet is ReentrancyGuard, Ownable {
     * @return User token balance
   */
 
-  function getBalance() external view returns(uint) {
-    return balances[msg.sender];
+  function getBalance(address _user) external view returns(uint) {
+    return balances[_user];
   }
 
   /**
